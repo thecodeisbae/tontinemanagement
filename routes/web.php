@@ -55,3 +55,10 @@ Route::get('/payement/delete/{id}', [MainController::class,'deletePayment']);
 Route::post('/payement', [MainController::class,'storePayment']);
 Route::post('/getClients', [MainController::class,'getClients']);
 /* Fin Payements */
+
+/* Debut  Avancements */
+Route::get('/avancements', [MainController::class,'avancements']);
+Route::get('/avancement/delete/{id}', [MainController::class,'deleteAvancement']);
+Route::post('/avancement', [MainController::class,'storeAvancement']);
+Route::post('/getMisesByClient', [MainController::class,'getMisesByClient']);
+/* Fin Avancements */

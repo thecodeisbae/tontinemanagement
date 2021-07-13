@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Avancement;
 use App\Models\Client;
 use App\Models\Mise;
 use App\Models\Payement;
@@ -248,8 +249,8 @@ class MainController extends Controller
 
     function deletePayment($id)
     {
-        Utilisateur::destroy($id);
-        return back()->with('success','Cet utilisateur a été correctement supprimé');
+        Payement::destroy($id);
+        return back()->with('success','Ce payement a été correctement supprimé');
     }
 
     function storePayment()
@@ -283,5 +284,50 @@ class MainController extends Controller
         }
         $souscription->save();
     }
+
+    function avancements()
+    {
+        $clients = Client::all();
+        $avancements =  Souscription::join('mises','souscriptions.mise_id','=','mises.id')
+                                                        ->join('clients','souscriptions.client_id','=','clients.id')
+                                                        ->join('avancements','souscriptions.id','=','avancements.souscription_id')
+                                                        ->select('clients.id','clients.nom','clients.prenoms','avancements.created_at','avancements.statut','mises.montant','souscriptions.solde_final')
+                                                        ->get();
+        $title = "Avancements";
+        return view('avancements',compact('clients','avancements','title'));
+    }
+
+    function getMisesByClient()
+    {
+        $client = Client::find(request('client'));
+        $mises = Souscription::join('mises','souscriptions.mise_id','=','mises.id')
+                                              ->join('clients','souscriptions.client_id','=','clients.id')
+                                              ->select('mises.id','mises.montant')
+                                              ->where('souscriptions.client_id',$client->id)
+                                              ->where('statut',0)
+                                              ->get();
+        $output = '<option >Choisir la mise</option>';
+        foreach ($mises as $mise) {
+            $output .= '<option value="' . $mise->id . '">' . $mise->montant. '</option>';
+        }
+        echo $output;
+    }
+
+    function storeAvancement()
+    {
+        $suscribe = Souscription::where(
+                [
+                    ['mise_id',request('mise')],
+                    ['client_id',request('client')],
+                    ['statut',0]
+                ])->first();
+        $mise = Mise::find(request('mise'));
+        $avance = new Avancement();
+        $avance->souscription_id = $suscribe->id;
+        $avance->statut = 0;
+        $avance->save();
+        return redirect('/avancements')->with('success','Avancement enregistré avec succès');
+    }
+
 
 }

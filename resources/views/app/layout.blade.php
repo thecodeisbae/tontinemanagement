@@ -140,9 +140,9 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link  " href="../pages/rtl.html">
+            <a class="nav-link   {{ ( $title ?? '' ) == 'Avancements' ? 'active' : '' }}  " href="/avancements">
                 <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                    <i class="fa fa-money-bill opacity-10 text-dark me-1" aria-hidden="true"></i>
+                    <i class="fa fa-money-bill opacity-10  {{ ( $title ?? '' ) == 'Avancements' ? 'icon-white' : 'text-dark' }}   me-1" aria-hidden="true"></i>
                 </div>
               <span class="nav-link-text ms-1">Avancements</span>
             </a>
