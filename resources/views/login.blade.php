@@ -105,7 +105,7 @@
                       <p class="mb-0">Entrer vos identifiants pour vous connectez</p>
                     </div>
                     <div class="card-body">
-                        @include('flash_message')
+                        @include('flashMessage')
                       <form role="form" action="/login" method="post" enctype="multipart/form-data">
                         @csrf
                         <label>Email</label>
