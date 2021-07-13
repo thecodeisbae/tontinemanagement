@@ -16,18 +16,12 @@ class CreateAvancementsTable extends Migration
         Schema::disableForeignKeyConstraints();
         Schema::create('avancements', function (Blueprint $table) {
             $table->id();
-            $table->unsignedBigInteger('client_id');
-            $table->unsignedBigInteger('mise_id');
+            $table->unsignedBigInteger('souscription_id');
             $table->boolean('statut')->default(false);
             $table->timestamps();
-            $table->foreign('client_id')
+            $table->foreign('souscription_id')
                         ->references('id')
-                        ->on('clients')
-                        ->onDelete('restrict')
-                        ->onUpdate('restrict');
-            $table->foreign('mise_id')
-                        ->references('id')
-                        ->on('mises')
+                        ->on('souscriptions')
                         ->onDelete('restrict')
                         ->onUpdate('restrict');
         });
