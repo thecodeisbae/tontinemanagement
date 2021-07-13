@@ -4,7 +4,10 @@ namespace App\Http\Controllers;
 
 use App\Models\Client;
 use App\Models\Mise;
+use App\Models\Payement;
+use App\Models\Souscription;
 use App\Models\Utilisateur;
+use Carbon\Carbon;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Hash;
 
@@ -177,6 +180,108 @@ class MainController extends Controller
         $user = Utilisateur::find($id);
         $user->update($data);
         return redirect('users')->with('success','Mise à jour effectuée');
+    }
+
+    function suscribes()
+    {
+        $mises = Mise::all();
+        $clients = Client::all();
+        $suscribes = Souscription::join('clients','souscriptions.client_id','=','clients.id')
+                                                    ->join('mises','souscriptions.mise_id','=','mises.id')
+                                                    ->select('clients.nom','clients.prenoms','mises.montant','souscriptions.id','souscriptions.solde','souscriptions.statut')
+                                                    ->get();
+        $title = "Souscriptions";
+        return view('suscribes',compact('mises', 'clients', 'title','suscribes'));
+    }
+
+    function storeSuscribe()
+    {
+        $client = Client::find(request('client'));
+        $mise = Mise::find(request('mise'));
+        $debut = Carbon::now()->toDateTimeString();
+        $fin = Carbon::now()->addDays($mise->duree)->toDateTimeString();
+        $suscribe = new Souscription();
+        $suscribe->client_id = $client->id;
+        $suscribe->mise_id = $mise->id;
+        $suscribe->solde_final = $mise->montant * $mise->duree;
+        $suscribe->solde = 0;
+        $suscribe->debut = $debut;
+        $suscribe->fin = $fin;
+        $suscribe->statut = 0;
+        $suscribe->save();
+        return redirect('suscribes')->with('success', 'Souscription réussie');
+    }
+
+    function deleteSuscribe($id)
+    {
+        Souscription::destroy($id);
+        return back()->with('success','Cette souscription a été correctement supprimée');
+    }
+
+    function payements()
+    {
+        $mises = Mise::all();
+        $payements = Payement::join('souscriptions','payements.souscription_id','=','souscriptions.id')
+                                                ->join('mises','souscriptions.mise_id','=','mises.id')
+                                                ->join('clients','souscriptions.client_id','=','clients.id')
+                                                ->select('clients.nom','clients.prenoms','mises.montant','souscriptions.id','souscriptions.solde','payements.created_at')
+                                                ->get();
+        $title = "Payements";
+        return view('payements',compact('mises','payements','title'));
+    }
+
+    function getClients()
+    {
+        $mise = Mise::find(request('mise'));
+        $clients = Souscription::join('mises','souscriptions.mise_id','=','mises.id')
+                                              ->join('clients','souscriptions.client_id','=','clients.id')
+                                              ->select('clients.id','clients.nom','clients.prenoms')
+                                              ->where('souscriptions.mise_id',$mise->id)
+                                              ->where('statut',0)
+                                              ->get();
+        $output = '<option >Choisir le client</option>';
+        foreach ($clients as $client) {
+            $output .= '<option value="' . $client->id . '">' . $client->nom.' '.$client->prenoms . '</option>';
+        }
+        echo $output;
+    }
+
+    function deletePayment($id)
+    {
+        Utilisateur::destroy($id);
+        return back()->with('success','Cet utilisateur a été correctement supprimé');
+    }
+
+    function storePayment()
+    {
+        $suscribe = Souscription::where(
+                [
+                    ['mise_id',request('mise')],
+                    ['client_id',request('client')],
+                    ['statut',0]
+                ])->first();
+        $mise = Mise::find(request('mise'));
+        $pay = new Payement();
+        $pay->souscription_id = $suscribe->id;
+        $pay->save();
+        $this->setStatus($suscribe->id,$mise->montant);
+        return redirect('/payements')->with('success','Payement enregistré avec succès');
+    }
+
+    function setStatus($souscription_id,$montant)
+    {
+        $souscription = Souscription::find($souscription_id);
+        if(($souscription->solde+$montant) == $souscription->solde_final)
+        {
+            $souscription->solde = $souscription->solde+$montant;
+            $souscription->statut = 1;
+        }
+        else
+        {
+            $souscription->solde = $souscription->solde+$montant;
+            $souscription->statut = 0;
+        }
+        $souscription->save();
     }
 
 }

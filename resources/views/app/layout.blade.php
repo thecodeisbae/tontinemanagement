@@ -18,6 +18,7 @@
 
 <head>
   <meta charset="utf-8" />
+  <meta name="csrf-token" content="{{ csrf_token() }}" />
   <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
   <link rel="apple-touch-icon" sizes="76x76" href="../assets/img/apple-icon.png">
   <link rel="icon" type="image/png" href="../assets/img/favicon.png">
@@ -102,22 +103,22 @@
         <li class="nav-item">
             <a class="nav-link {{ ( $title ?? '' ) == 'Clients' ? 'active' : '' }}  " href="/clients">
               <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                  <i class="fa fa-users opacity-10 me-1 icon-white" aria-hidden="true"></i>
+                  <i class="fa fa-users opacity-10 me-1 {{ ( $title ?? '' ) == 'Clients' ? 'icon-white' : 'text-dark' }}" aria-hidden="true"></i>
               </div>
               <span class="nav-link-text ms-1">Clients</span>
             </a>
         </li>
 
         <li class="nav-item">
-          <a class="nav-link  " href="../pages/billing.html">
+          <a class="nav-link  {{ ( $title ?? '' ) == 'Payements' ? 'active' : '' }}  " href="/payements">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                <i class="fa fa-money opacity-10 text-dark me-1" aria-hidden="true"></i>
+                <i class="fa fa-money opacity-10  {{ ( $title ?? '' ) == 'Payements' ? 'icon-white' : 'text-dark' }}  me-1" aria-hidden="true"></i>
             </div>
             <span class="nav-link-text ms-1">Payements</span>
           </a>
         </li>
         <li class="nav-item">
-          <a class="nav-link  " href="../pages/virtual-reality.html">
+          <a class="nav-link {{ ( $title ?? '' ) == 'Souscriptions' ? 'active' : '' }}   " href="/suscribes">
             <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
               <svg width="12px" height="12px" viewBox="0 0 42 42" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
                 <title>box-3d-50</title>
@@ -148,9 +149,9 @@
         </li>
 
         <li class="nav-item">
-            <a class="nav-link  " href="/users">
+            <a class="nav-link {{ ( $title ?? '' ) == 'Utilisateurs' ? 'active' : '' }}  " href="/users">
               <div class="icon icon-shape icon-sm shadow border-radius-md bg-white text-center me-2 d-flex align-items-center justify-content-center">
-                  <i class="fa fa-user-friends opacity-10 icon-white me-1" aria-hidden="true"></i>
+                  <i class="fa fa-user-friends opacity-10 {{ ( $title ?? '' ) == 'Utilisateurs' ? 'icon-white' : 'text-dark' }}  me-1" aria-hidden="true"></i>
               </div>
               <span class="nav-link-text ms-1">Utilisateurs</span>
             </a>

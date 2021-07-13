@@ -42,3 +42,16 @@ Route::post('/user', [MainController::class,'storeUser']);
 Route::get('/user/edit/{id}', [MainController::class,'editUser']);
 Route::post('/user/edit/{id}', [MainController::class,'updateUser']);
 /* Fin Users */
+
+/* Debut  Souscriptions */
+Route::get('/suscribes', [MainController::class,'suscribes']);
+Route::get('/suscribe/delete/{id}', [MainController::class,'deleteSuscribe']);
+Route::post('/suscribe', [MainController::class,'storeSuscribe']);
+/* Fin Souscriptions */
+
+/* Debut  Payements */
+Route::get('/payements', [MainController::class,'payements']);
+Route::get('/payement/delete/{id}', [MainController::class,'deletePayment']);
+Route::post('/payement', [MainController::class,'storePayment']);
+Route::post('/getClients', [MainController::class,'getClients']);
+/* Fin Payements */
